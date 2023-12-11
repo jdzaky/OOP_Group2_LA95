@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KoneksiDB { //harus buat db nya
+public class KoneksiDB { 
     private final String url = "jdbc:mysql://localhost:3306/doctor_finder";
     private final String username = "root";
     private final String password = "";
@@ -22,7 +22,7 @@ public class KoneksiDB { //harus buat db nya
         statement.setString(4, dokter.getJadwalPraktik());
         statement.executeUpdate();
         connection.close();
-    }
+    } 
 
     public void updateDoctor(String id, Dokter updatedDokter) throws SQLException {
         Connection connection = DriverManager.getConnection(url, username, password);
@@ -44,7 +44,7 @@ public class KoneksiDB { //harus buat db nya
         statement.executeUpdate();
         connection.close();
     }
-
+    
     public List<Dokter> getAllDoctors() throws SQLException {
         List<Dokter> daftarDokter = new ArrayList<>();
         Connection connection = DriverManager.getConnection(url, username, password);
