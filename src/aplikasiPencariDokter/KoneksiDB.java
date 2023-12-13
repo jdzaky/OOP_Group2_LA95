@@ -1,16 +1,27 @@
 package aplikasiPencariDokter;
 
 import java.sql.*;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class KoneksiDB { 
-    private final String url = "jdbc:mysql://localhost:3306/doctor_finder";
-    private final String username = "root";
-    private final String password = "";
+	
+	private static String url = "jdbc:mysql://localhost:3306/doctor_finder";
+    private static String username = "root";
+    private static String password = "";
+    private static Connection con;
     private List<Dokter> daftarDokter;
+    
+    static {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection(url, username, password);
+//            System.out.print("berlahsl");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 
     public void addDoctor(Dokter dokter) throws SQLException {
         Connection connection = DriverManager.getConnection(url, username, password);
@@ -47,91 +58,126 @@ public class KoneksiDB {
     
     public List<Dokter> getAllDoctors() throws SQLException {
         List<Dokter> daftarDokter = new ArrayList<>();
-        Connection connection = DriverManager.getConnection(url, username, password);
         String sql = "SELECT * FROM dokter";
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql);
-        while (resultSet.next()) {
-            String kodeDokter = resultSet.getString("kode_dokter");
-            String namaDokter = resultSet.getString("nama_dokter");
-            String spesialisasi = resultSet.getString("spesialisasi");
-            String jadwalPraktik = resultSet.getString("jadwal_praktik");
-            String gelar = resultSet.getString("gelar");
-            Dokter dokter = new DokterUmum(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, gelar);
-            daftarDokter.add(dokter);
+        try (Statement statement = con.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                String kodeDokter = resultSet.getString("kode_dokter");
+                String namaDokter = resultSet.getString("nama_dokter");
+                String spesialisasi = resultSet.getString("spesialisasi");
+                String jadwalPraktik = resultSet.getString("jadwal_praktik");
+                String gelar = resultSet.getString("gelar");
+
+                // Buat instance dokter sesuai dengan tipenya
+                Dokter dokter;
+                if (gelar != null && !gelar.isEmpty()) {
+                    dokter = new DokterUmum(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, gelar);
+                } else {
+                    dokter = new DokterSpesialis(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, "Bidang Spesialisasi"); // Replace "Bidang Spesialisasi" with the actual field
+                }
+
+                daftarDokter.add(dokter);
+            }
         }
-        connection.close();
         return daftarDokter;
     }
 
-	public void addAppointment(Appointment appointment) {
+	public void addAppointment(Appointment appointment) throws SQLException {
 		// TODO Auto-generated method stub
-		
+		  String sql = "INSERT INTO appointment(id_pasien, kode_dokter, tanggal_janji, keluhan_pasien) VALUES (?, ?, ?, ?)";
+		  PreparedStatement statement = con.prepareStatement(sql);
+
+		  statement.setString(1, appointment.getIdPasien());
+		  statement.setString(2, appointment.getKodeDokter());
+		  statement.setString(3, appointment.getTanggalJanji());
+		  statement.setString(4, appointment.getKeluhanPasien());
+
+		  try {
+		    statement.executeUpdate();
+		  } catch (SQLException e) {
+		    System.out.println("Error adding appointment: " + e.getMessage());
+		    throw e; 
+		  }
+
+
+		  statement.close();
 	}
 
-	public void deleteAppointment(String idPasien, String idJanji) {
-		// TODO Auto-generated method stub
-		
+	public void deleteAppointment(String idPasien, String idJanji) throws SQLException {
+		  String sql = "DELETE FROM appointment WHERE id_pasien = ? AND id_janji = ?";
+		  PreparedStatement statement = con.prepareStatement(sql);
+
+		  statement.setString(1, idPasien);
+		  statement.setString(2, idJanji);
+
+		  try {
+		    statement.executeUpdate();
+		  } catch (SQLException e) {
+		    System.out.println("Error deleting appointment: " + e.getMessage());
+		    throw e; // Rethrow the exception to notify the caller
+		  }
+
+		  statement.close();		
 	}
 
-	public boolean appointmentExists(String idPasien, String idJanji) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
-	public List<Appointment> getPatientAppointments(String idPasien) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Appointment> getPatientAppointments(String idPasien) throws SQLException {
+		  String sql = "SELECT * FROM appointment WHERE id_pasien = ?";
+		  PreparedStatement statement = con.prepareStatement(sql);
+
+		  statement.setString(1, idPasien);
+
+		  try (ResultSet resultSet = statement.executeQuery()) {
+		    List<Appointment> appointments = new ArrayList<>();
+
+		    while (resultSet.next()) {
+		      Appointment appointment = new Appointment();
+		      appointment.setIdPasien(resultSet.getString("id_pasien"));
+		      appointment.setNamaPasien(resultSet.getString("nama_pasien"));
+		      appointment.setKodeDokter(resultSet.getString("kode_dokter"));
+		      appointment.setTanggalJanji(resultSet.getString("tanggal_janji"));
+		      appointment.setKeluhanPasien(resultSet.getString("keluhan_pasien"));
+
+		      appointments.add(appointment);
+		    }
+
+		    return appointments;
+		  }
 	}
 
 	public Dokter getDoctorById(String kodeDokter) throws SQLException {
-		Dokter foundDoctor = null;
+	    String sql = "SELECT * FROM dokter WHERE kode_dokter = ?";
+	    try (PreparedStatement statement = con.prepareStatement(sql)) {
+	        statement.setString(1, kodeDokter);
+	        try (ResultSet resultSet = statement.executeQuery()) {
+	            if (resultSet.next()) {
+	                String namaDokter = resultSet.getString("nama_dokter");
+	                String spesialisasi = resultSet.getString("spesialisasi");
+	                String jadwalPraktik = resultSet.getString("jadwal_praktik");
+	                String gelar = resultSet.getString("gelar");
 
-        // Check if the doctor is already in the list
-        for (Dokter dokter : daftarDokter) {
-            if (dokter.getKodeDokter().equals(kodeDokter)) {
-                foundDoctor = dokter;
-                break;
-            }
-        }
+	                Dokter dokter;
+	                if (gelar != null && !gelar.isEmpty()) {
+	                    dokter = new DokterUmum(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, gelar);
+	                } else {
+	                    dokter = new DokterSpesialis(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, "Bidang Spesialisasi"); // Replace "Bidang Spesialisasi" with the actual field
+	                }
 
-        // If not found in memory, fetch from the database
-        if (foundDoctor == null) {
-            foundDoctor = fetchDoctorFromDatabase(kodeDokter);
-            if (foundDoctor != null) {
-                daftarDokter.add(foundDoctor);
-            }
-        }
-
-        return foundDoctor;
+	                return dokter;
+	            }
+	        }
+	    }
+	    return null;
 	}
-	private Dokter fetchDoctorFromDatabase(String kodeDokter) {
-        Dokter foundDoctor = null;
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
-            String sql = "SELECT * FROM dokter WHERE kode_dokter = ?";
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, kodeDokter);
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    if (resultSet.next()) {
-                        String namaDokter = resultSet.getString("nama_dokter");
-                        String spesialisasi = resultSet.getString("spesialisasi");
-                        String jadwalPraktik = resultSet.getString("jadwal_praktik");
-                        String gelar = resultSet.getString("gelar");
+	
+	public void addPatient(pasien pasien) throws SQLException {
+	    String sql = "INSERT INTO pasien (idPasien, namaPasien) VALUES (?, ?)";
+	    PreparedStatement statement = con.prepareStatement(sql);
+	    statement.setString(1, pasien.getIdPasien());
+	    statement.setString(2, pasien.getNamaPasien());
+	    statement.executeUpdate();
+	    statement.close();
+	  }
 
-                        // Assuming there are two types of doctors, you need to check the type from the database
-                        // and create the appropriate instance
-                        if (gelar != null && !gelar.isEmpty()) {
-                            foundDoctor = new DokterUmum(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, gelar);
-                        } else {
-                            foundDoctor = new DokterSpesialis(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, "Bidang Spesialisasi"); // Replace "Bidang Spesialisasi" with the actual field
-                        }
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace(); // Handle the exception according to your application's needs
-        }
-
-        return foundDoctor;
-    }
+	
 }

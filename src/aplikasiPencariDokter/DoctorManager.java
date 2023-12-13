@@ -5,7 +5,6 @@ import java.util.List;
 import java.sql.*;
 
 public class DoctorManager {
-	private String status = "not granted";
 	private List<Dokter> daftarDokter;
 	private KoneksiDB koneksiDB;
 	
@@ -15,16 +14,11 @@ public class DoctorManager {
 	}
 	
 	public void addDoctor(Dokter dokter) throws SQLException {
-		if(status.equals("granted")) {
 			this.koneksiDB.addDoctor(dokter);
 			daftarDokter.add(dokter);
-		}else {
-			System.out.println("Hanya admin yang dapat menambahkan dokter baru.");
-		}
 	}
 	
 	public void updateDoctor(String id, Dokter updatedDokter) throws SQLException {
-		if(status.equals("granted")) {
 			this.koneksiDB.updateDoctor(id, updatedDokter);
 			for(int i=0;i<daftarDokter.size();i++) {
 				if (daftarDokter.get(i).getId().equals(id)) {
@@ -32,13 +26,10 @@ public class DoctorManager {
                     break;
                 }
 			}
-		}else {
-			System.out.println("Hanya admin yang dapat memperbarui data dokter.");
-		}
+		
 	}
 	
 	public void deleteDoctor(String id) throws SQLException {
-        if (status.equals("granted")) {
             this.koneksiDB.deleteDoctor(id);
             for (int i = 0; i < daftarDokter.size(); i++) {
                 if (daftarDokter.get(i).getId().equals(id)) {
@@ -46,9 +37,6 @@ public class DoctorManager {
                     break;
                 }
             }
-        } else {
-        	System.out.println("Hanya admin yang dapat menghapus data dokter.");
-        }
     }
 	
 	public List<Dokter> getAllDoctors() throws SQLException{
@@ -68,11 +56,6 @@ public class DoctorManager {
         return hasilPencarian;
     }
 	
-	public void cekRole(String role) {
-		if(role.equals("ADMIN_ROLE")) {
-			status = "granted";
-		}
-	}
     
 	public Dokter getDoctorById(String kodeDokter) throws SQLException {
 		 Dokter foundDoctor = null;
