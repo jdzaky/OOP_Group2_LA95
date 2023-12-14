@@ -6,9 +6,9 @@ public class DokterSpesialis extends Dokter {
     public DokterSpesialis() {
     }
 
-    public DokterSpesialis(String kodeDokter, String namaDokter, String spesialisasi, String jadwalPraktik, String bidangSpesialisasi) {
+    public DokterSpesialis(String kodeDokter, String namaDokter, String spesialisasi, String jadwalPraktik) {
         super(kodeDokter, namaDokter, spesialisasi, jadwalPraktik);
-        this.bidangSpesialisasi = bidangSpesialisasi;
+//        this.bidangSpesialisasi = bidangSpesialisasi;
     }
 
     public String getBidangSpesialisasi() {
@@ -38,7 +38,7 @@ public class DokterSpesialis extends Dokter {
                 ", namaDokter='" + namaDokter + '\'' +
                 ", spesialisasi='" + spesialisasi + '\'' +
                 ", jadwalPraktik='" + jadwalPraktik + '\'' +
-                ", bidangSpesialisasi='" + bidangSpesialisasi + '\'' +
+                ", bidangSpesialisasi='" + spesialisasi + '\'' +
                 '}';
     }
 

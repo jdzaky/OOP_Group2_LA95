@@ -1,13 +1,12 @@
 package aplikasiPencariDokter;
 
 public class pasien {
-	private String id, nama;
+	private String nama;
 
 	public pasien() {
 		
 	}
-	public pasien(String id, String nama) {
-		this.id = id;
+	public pasien( String nama) {
 		this.nama = nama;
 	}
 	public String getNamaPasien() {
@@ -15,11 +14,5 @@ public class pasien {
     }
     public void setNamaPasien(String kodeDokter) {
     	this.nama = kodeDokter;
-    }
-	public String getIdPasien() {
-    	return id;
-    }
-    public void setIdPasien(String kodeDokter) {
-    	this.id = kodeDokter;
     }
 }

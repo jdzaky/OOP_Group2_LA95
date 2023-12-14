@@ -60,7 +60,6 @@ public class DoctorManager {
 	public Dokter getDoctorById(String kodeDokter) throws SQLException {
 		 Dokter foundDoctor = null;
 
-		    // Check if the doctor is already in the list
 		    for (Dokter dokter : daftarDokter) {
 		        if (dokter.getKodeDokter().equals(kodeDokter)) {
 		            foundDoctor = dokter;
@@ -68,7 +67,6 @@ public class DoctorManager {
 		        }
 		    }
 
-		    // If not found in memory, fetch from the database
 		    if (foundDoctor == null) {
 		        foundDoctor = koneksiDB.getDoctorById(kodeDokter);
 		        if (foundDoctor != null) {

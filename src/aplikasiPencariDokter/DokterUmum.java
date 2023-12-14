@@ -6,9 +6,8 @@ public class DokterUmum extends Dokter {
 	public DokterUmum() {
 		
 	}
-	public DokterUmum(String kodeDokter, String namaDokter, String spesial, String jadwal, String gelar) {
+	public DokterUmum(String kodeDokter, String namaDokter, String spesial, String jadwal) {
 		super(kodeDokter, namaDokter, spesial, jadwal);
-		this.gelar = gelar;
 	}
 	public String getGelar() {
         return gelar;
@@ -37,8 +36,7 @@ public class DokterUmum extends Dokter {
                 ", namaDokter='" + namaDokter + '\'' +
                 ", spesialisasi='" + spesialisasi + '\'' +
                 ", jadwalPraktik='" + jadwalPraktik + '\'' +
-                ", gelar='" + gelar + '\'' +
-                '}';
+                " }";
     }
 	
 }

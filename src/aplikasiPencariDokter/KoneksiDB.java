@@ -10,13 +10,11 @@ public class KoneksiDB {
     private static String username = "root";
     private static String password = "";
     private static Connection con;
-    private List<Dokter> daftarDokter;
     
     static {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(url, username, password);
-//            System.out.print("berlahsl");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -25,7 +23,7 @@ public class KoneksiDB {
 
     public void addDoctor(Dokter dokter) throws SQLException {
         Connection connection = DriverManager.getConnection(url, username, password);
-        String sql = "INSERT INTO dokter (kode_dokter, nama_dokter, spesialisasi, jadwal_praktik) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO dokter (kode_dokter, nama_dokter, spesialisasi, jadwal_praktik) VALUES ( ?, ?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, dokter.getKodeDokter());
         statement.setString(2, dokter.getNamaDokter());
@@ -66,14 +64,11 @@ public class KoneksiDB {
                 String namaDokter = resultSet.getString("nama_dokter");
                 String spesialisasi = resultSet.getString("spesialisasi");
                 String jadwalPraktik = resultSet.getString("jadwal_praktik");
-                String gelar = resultSet.getString("gelar");
-
-                // Buat instance dokter sesuai dengan tipenya
                 Dokter dokter;
-                if (gelar != null && !gelar.isEmpty()) {
-                    dokter = new DokterUmum(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, gelar);
+                if (spesialisasi.isEmpty()) {
+                    dokter = new DokterUmum(kodeDokter, namaDokter, spesialisasi, jadwalPraktik);
                 } else {
-                    dokter = new DokterSpesialis(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, "Bidang Spesialisasi"); // Replace "Bidang Spesialisasi" with the actual field
+                    dokter = new DokterSpesialis(kodeDokter, namaDokter, spesialisasi, jadwalPraktik); 
                 }
 
                 daftarDokter.add(dokter);
@@ -114,7 +109,7 @@ public class KoneksiDB {
 		    statement.executeUpdate();
 		  } catch (SQLException e) {
 		    System.out.println("Error deleting appointment: " + e.getMessage());
-		    throw e; // Rethrow the exception to notify the caller
+		    throw e; 
 		  }
 
 		  statement.close();		
@@ -154,13 +149,12 @@ public class KoneksiDB {
 	                String namaDokter = resultSet.getString("nama_dokter");
 	                String spesialisasi = resultSet.getString("spesialisasi");
 	                String jadwalPraktik = resultSet.getString("jadwal_praktik");
-	                String gelar = resultSet.getString("gelar");
 
 	                Dokter dokter;
-	                if (gelar != null && !gelar.isEmpty()) {
-	                    dokter = new DokterUmum(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, gelar);
+	                if (spesialisasi.isEmpty()) {
+	                    dokter = new DokterUmum(kodeDokter, namaDokter, spesialisasi, jadwalPraktik);
 	                } else {
-	                    dokter = new DokterSpesialis(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, "Bidang Spesialisasi"); // Replace "Bidang Spesialisasi" with the actual field
+	                    dokter = new DokterSpesialis(kodeDokter, namaDokter, spesialisasi, jadwalPraktik); 
 	                }
 
 	                return dokter;
@@ -171,10 +165,9 @@ public class KoneksiDB {
 	}
 	
 	public void addPatient(pasien pasien) throws SQLException {
-	    String sql = "INSERT INTO pasien (idPasien, namaPasien) VALUES (?, ?)";
+	    String sql = "INSERT INTO pasien (namaPasien) VALUES (?)";
 	    PreparedStatement statement = con.prepareStatement(sql);
-	    statement.setString(1, pasien.getIdPasien());
-	    statement.setString(2, pasien.getNamaPasien());
+	    statement.setString(1, pasien.getNamaPasien());
 	    statement.executeUpdate();
 	    statement.close();
 	  }

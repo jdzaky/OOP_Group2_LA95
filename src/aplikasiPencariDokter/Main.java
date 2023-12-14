@@ -12,8 +12,8 @@ public class Main {
 		DoctorManager doctorManager = new DoctorManager();
 		int x, pilihan;
 		do {
-			System.out.println("Input role anda");
-			System.out.print("1. Admin\n2. User\n0. Exit\n =>");
+			System.out.println("Selamat datang\nInput role anda");
+			System.out.print("1. Admin\n2. User\n0. Exit\n=>");
 			 x = scanner.nextInt();
 			 switch(x) {
 			 case 1:
@@ -49,13 +49,13 @@ public class Main {
 						printmenuUser();
 						pilihan = scanner.nextInt();
 						switch(pilihan) {
-						case 1: //buat janji
+						case 1: 
 							addAppoint(scanner, doctorManager);
 							break;
-						case 2: //mencari dokter
+						case 2: 
 			                searchDokter(scanner, doctorManager);
 							break;
-						case 3: //list dokter
+						case 3: 
 			                listDokter(doctorManager);
 							break;
 						case 4 :
@@ -102,14 +102,12 @@ public class Main {
 	private static void register(Scanner scanner) {
 		System.out.print("Masukkan Nama: ");
         String nama = scanner.next();
-        System.out.print("Masukkan id: ");
-        String id = scanner.next();
-		pasien pasienn = new pasien(id, nama);
+		pasien pasienn = new pasien(nama);
 		
 		try {
 		    KoneksiDB koneksiDB = new KoneksiDB();
 		    koneksiDB.addPatient(pasienn);
-			  System.out.println("Pasien " + nama + " dengan ID " + id + " berhasil didaftarkan");
+			  System.out.println("Pasien " + nama + " berhasil didaftarkan");
 		  } catch (SQLException e) {
 		    System.out.println("Error registering patient: " + e.getMessage());
 		  }
@@ -117,20 +115,21 @@ public class Main {
 	}
 	
 	private static void addDokter(Scanner scanner, DoctorManager doctorManager) {
+		scanner.nextLine();
 		System.out.print("Masukkan kode dokter: ");
-        String kodeDokter = scanner.next();
+        String kodeDokter = scanner.nextLine();
         System.out.print("Masukkan nama dokter: ");
-        String namaDokter = scanner.next();
-        System.out.print("Masukkan spesialisasi: ");
-        String spesialisasi = scanner.next();
+        String namaDokter = scanner.nextLine();
+        System.out.print("Masukkan spesialisasi: (jika belum ada lewati) :");
+        String spesialisasi = scanner.nextLine();
         System.out.print("Masukkan jadwal praktik: ");
-        String jadwalPraktik = scanner.next();
+        String jadwalPraktik = scanner.nextLine();
         
-        Dokter dokter;
+        Dokter dokter = null;
         if(spesialisasi.isEmpty()) {
-        	dokter = new DokterUmum(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, null);
-        }else {
-            dokter = new DokterSpesialis(kodeDokter, namaDokter, spesialisasi, jadwalPraktik, null);
+        	dokter = new DokterUmum(kodeDokter, namaDokter, spesialisasi, jadwalPraktik);
+        } else {
+            dokter = new DokterSpesialis(kodeDokter, namaDokter, spesialisasi, jadwalPraktik);
         }
         
         try {
@@ -144,7 +143,7 @@ public class Main {
 	private static void updateDokter(Scanner scanner, DoctorManager doctorManager) {
 		System.out.print("Masukkan kode dokter: ");
         String kodeDokter = scanner.next();
-        
+		scanner.nextLine();
         Dokter dokter = null;
 		try {
 			dokter = doctorManager.getDoctorById(kodeDokter);
@@ -159,19 +158,19 @@ public class Main {
         
         
         System.out.print("Masukkan nama dokter baru (kosongkan jika tidak ingin mengubah): ");
-        String namaDokterBaru = scanner.next();
+        String namaDokterBaru = scanner.nextLine();
         if (!namaDokterBaru.isEmpty()) {
             dokter.setNamaDokter(namaDokterBaru);
         }
 
         System.out.print("Masukkan spesialisasi baru (kosongkan jika tidak ingin mengubah): ");
-        String spesialisasiBaru = scanner.next();
+        String spesialisasiBaru = scanner.nextLine();
         if (!spesialisasiBaru.isEmpty()) {
             dokter.setSpesialisasi(spesialisasiBaru);
         }
 
         System.out.print("Masukkan jadwal praktik baru (kosongkan jika tidak ingin mengubah): ");
-        String jadwalPraktikBaru = scanner.next();
+        String jadwalPraktikBaru = scanner.nextLine();
         if (!jadwalPraktikBaru.isEmpty()) {
             dokter.setJadwalPraktik(jadwalPraktikBaru);
         }
@@ -231,8 +230,9 @@ public class Main {
 		  String kodeDokter = scanner.next();
 		  System.out.print("Masukkan tanggal janji: ");
 		  String tanggalJanji = scanner.next();
+		  scanner.nextLine();
 		  System.out.print("Masukkan keluhan: ");
-		  String keluhan = scanner.next();
+		  String keluhan = scanner.nextLine();
 
 		  Appointment appointment = new Appointment();
 		  appointment.setIdPasien(idPasien);
@@ -244,6 +244,7 @@ public class Main {
 		    AppointmentManager appointmentManager = new AppointmentManager(doctorManager);
 		    appointmentManager.bookAppointment(appointment);
 		    System.out.println("Janji temu berhasil dibuat");
+		    System.out.println("Istirahat yang cukup dan makan makanan bergizi");
 		  } catch (SQLException e) {
 			    System.out.println("Jadwal dokter tidak ada yang memenuhi");
 		    System.out.println("Error: " + e.getMessage());
