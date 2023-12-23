@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 14, 2023 at 04:17 AM
+-- Generation Time: Dec 23, 2023 at 03:56 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,8 +40,7 @@ CREATE TABLE `appointment` (
 --
 
 INSERT INTO `appointment` (`id_pasien`, `id_janji`, `kode_dokter`, `tanggal_janji`, `keluhan_pasien`) VALUES
-(1, 3, 'JD1', '18.00', 'Sakit perut'),
-(1, 4, 'JD4', '11', 'sakit gigi');
+(10, 2, 'JD1', '10 Desember', 'sakit');
 
 -- --------------------------------------------------------
 
@@ -61,10 +60,9 @@ CREATE TABLE `dokter` (
 --
 
 INSERT INTO `dokter` (`kode_dokter`, `nama_dokter`, `spesialisasi`, `jadwal_praktik`) VALUES
-('JD1', 'Anthony', '', '18.00'),
-('JD2', 'Naufal', 'Gigi', '12.00'),
-('JD3', 'Daffa', 'Organ dalam', '10 Agustus'),
-('JD4', 'Dzaky', '', '11 September');
+('JD1', 'Anthony', 'THT', '10 Desember'),
+('JD3', 'Daffa', 'Organ dalam', '12 Desember'),
+('JD4', 'Dzaky', '', '15 Desember');
 
 -- --------------------------------------------------------
 
@@ -83,7 +81,12 @@ CREATE TABLE `pasien` (
 
 INSERT INTO `pasien` (`namaPasien`, `idPasien`) VALUES
 ('Faza', 1),
-('Edbert', 2);
+('Edbert', 2),
+('Richard', 3),
+('nopal', 4),
+('julian', 5),
+('daffa', 9),
+('Andi', 10);
 
 --
 -- Indexes for dumped tables
@@ -117,13 +120,13 @@ ALTER TABLE `pasien`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `id_janji` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_janji` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pasien`
 --
 ALTER TABLE `pasien`
-  MODIFY `idPasien` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idPasien` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
