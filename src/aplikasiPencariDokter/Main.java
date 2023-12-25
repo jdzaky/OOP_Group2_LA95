@@ -106,8 +106,8 @@ public class Main {
 		
 		try {
 		    KoneksiDB koneksiDB = new KoneksiDB();
-		    koneksiDB.addPatient(pasienn);
-			  System.out.println("Pasien " + nama + " berhasil didaftarkan");
+	        int idPasien = koneksiDB.addPatient(pasienn);	        
+	        System.out.println("Pasien " + nama + " dengan id " + idPasien + " berhasil didaftarkan");
 		  } catch (SQLException e) {
 		    System.out.println("Error registering patient: " + e.getMessage());
 		  }
@@ -152,7 +152,6 @@ public class Main {
 	            return;
 	        }
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
@@ -229,11 +228,10 @@ public class Main {
 		  System.out.print("Masukkan kode dokter: ");
 		  String kodeDokter = scanner.next();
 		  System.out.print("Masukkan tanggal janji: ");
-		  String tanggalJanji = scanner.next();
 		  scanner.nextLine();
+		  String tanggalJanji = scanner.nextLine();
 		  System.out.print("Masukkan keluhan: ");
 		  String keluhan = scanner.nextLine();
-
 		  Appointment appointment = new Appointment();
 		  appointment.setIdPasien(idPasien);
 		  appointment.setKodeDokter(kodeDokter);
@@ -243,10 +241,8 @@ public class Main {
 		  try {
 		    AppointmentManager appointmentManager = new AppointmentManager(doctorManager);
 		    appointmentManager.bookAppointment(appointment);
-		    System.out.println("Janji temu berhasil dibuat");
-		    System.out.println("Istirahat yang cukup dan makan makanan bergizi");
 		  } catch (SQLException e) {
-			    System.out.println("Jadwal dokter tidak ada yang memenuhi");
+			System.out.println("Jadwal dokter tidak memenuhi");
 		    System.out.println("Error: " + e.getMessage());
 		  }
 	}

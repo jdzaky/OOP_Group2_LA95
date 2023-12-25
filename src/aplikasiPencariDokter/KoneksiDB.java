@@ -78,7 +78,6 @@ public class KoneksiDB {
     }
 
 	public void addAppointment(Appointment appointment) throws SQLException {
-		// TODO Auto-generated method stub
 		  String sql = "INSERT INTO appointment(id_pasien, kode_dokter, tanggal_janji, keluhan_pasien) VALUES (?, ?, ?, ?)";
 		  PreparedStatement statement = con.prepareStatement(sql);
 
@@ -98,12 +97,12 @@ public class KoneksiDB {
 		  statement.close();
 	}
 
-	public void deleteAppointment(String idPasien, String idJanji) throws SQLException {
-		  String sql = "DELETE FROM appointment WHERE id_pasien = ? AND id_janji = ?";
+	public void deleteAppointment(String idPasien, String id_janji) throws SQLException {
+		  String sql = "DELETE FROM appointment WHERE id_pasien = ? AND keluhan_pasien = ?";
 		  PreparedStatement statement = con.prepareStatement(sql);
 
 		  statement.setString(1, idPasien);
-		  statement.setString(2, idJanji);
+		  statement.setString(2, id_janji);
 
 		  try {
 		    statement.executeUpdate();
@@ -164,13 +163,21 @@ public class KoneksiDB {
 	    return null;
 	}
 	
-	public void addPatient(pasien pasien) throws SQLException {
-	    String sql = "INSERT INTO pasien (namaPasien) VALUES (?)";
-	    PreparedStatement statement = con.prepareStatement(sql);
+	public int addPatient(pasien pasien) throws SQLException {
+		String sql = "INSERT INTO pasien (namaPasien) VALUES (?)";
+	    PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 	    statement.setString(1, pasien.getNamaPasien());
 	    statement.executeUpdate();
-	    statement.close();
-	  }
 
+	    try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+	        if (generatedKeys.next()) {
+	            return generatedKeys.getInt(1);  
+	        } else {
+	            throw new SQLException("Failed to retrieve generated ID for pasien");
+	        }
+	    } finally {
+	        statement.close();
+	    }
+	  }
 	
 }

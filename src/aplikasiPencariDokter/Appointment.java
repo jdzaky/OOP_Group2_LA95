@@ -1,6 +1,5 @@
 package aplikasiPencariDokter;
 
-import java.util.List;
 
 public class Appointment {
 	private String idPasien;
@@ -8,8 +7,6 @@ public class Appointment {
     private String kodeDokter;
     private String tanggalJanji;
     private String keluhanPasien;
-    private String diagnosisDokter;
-    private List<String> resepObat;
 
     public Appointment() {
     }
@@ -62,19 +59,4 @@ public class Appointment {
         this.keluhanPasien = keluhanPasien;
     }
 
-    public String getDiagnosisDokter() {
-        return diagnosisDokter;
-    }
-
-    public void setDiagnosisDokter(String diagnosisDokter) {
-        this.diagnosisDokter = diagnosisDokter;
-    }
-
-    public List<String> getResepObat() {
-        return resepObat;
-    }
-
-    public void setResepObat(List<String> resepObat) {
-        this.resepObat = resepObat;
-    }
 }
